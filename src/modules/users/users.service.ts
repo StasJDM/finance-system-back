@@ -20,4 +20,19 @@ export class UsersService {
   async findOneById(id: number): Promise<User> {
     return await this.userRepository.findOne<User>({ where: { id } });
   }
+
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.findAll<User>();
+  }
+
+  async update(id: number, user: UserDto): Promise<any> {
+    return await this.userRepository.update<User>(
+      { ...user },
+      { where: { id } },
+    );
+  }
+
+  async delete(id: number): Promise<any> {
+    return await this.userRepository.destroy({ where: { id } });
+  }
 }
