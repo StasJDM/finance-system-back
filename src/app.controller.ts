@@ -1,7 +1,7 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
+import { Public } from './core/decorators/public.decorator';
 import { AuthService } from './modules/auth/auth.service';
-import { JwtAuthGuard } from './modules/auth/jwt/jwt-auth.guard';
 
 @Controller()
 export class AppController {
@@ -10,9 +10,14 @@ export class AppController {
     private _authService: AuthService,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Public()
+  @Get('')
+  ping() {
+    return { message: 'Ok, ping works' };
+  }
+
+  @Get('private')
+  pingPrivate() {
+    return { message: 'Ok, private ping works' };
   }
 }
