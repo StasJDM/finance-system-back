@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: pg_container
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - '5432:5432'
+    networks:
+      - financy-network
+    volumes:
+      - financy-volume:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - '5050:80'
+    networks:
+      - financy-network
+    volumes:
+      - financy-volume:/var/lib/pgadmin4/data
+
+networks:
+  financy-network:
+    driver: bridge
+
+volumes:
+  financy-volume:

@@ -1,41 +1,59 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Gender } from '../enums';
 
-@Table
-export class User extends Model {
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
   @Column({
-    type: DataType.STRING,
-    allowNull: false,
+    name: 'first_name',
+    type: 'varchar',
   })
-  name: string;
+  firstName: string;
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false,
+    name: 'last_name',
+    type: 'varchar',
   })
-  surname: string;
+  lastName: string;
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false,
+    type: 'varchar',
+    unique: true,
   })
   email: string;
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false,
+    type: 'varchar',
   })
   password: string;
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false,
+    type: 'varchar',
   })
   salt: string;
 
   @Column({
-    type: DataType.ENUM,
-    values: ['male', 'female'],
-    allowNull: false,
+    type: 'enum',
+    enum: Gender,
+    default: Gender.Male,
   })
   gender: string;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt: Date;
 }

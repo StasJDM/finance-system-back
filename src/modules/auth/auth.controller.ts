@@ -16,7 +16,7 @@ export class AuthController {
   }
 
   @Public()
-  @Post('singup')
+  @Post('register')
   async singUp(@Body() user: UserDto) {
     return await this._authService.create(user);
   }

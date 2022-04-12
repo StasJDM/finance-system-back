@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { hash_rounds } from 'src/config/configuration';
 import { UsersService } from 'src/modules/users/users.service';
 
 @Injectable()
@@ -24,19 +25,16 @@ export class AuthService {
       return null;
     }
 
-    const { password, salt, ...result } = user['dataValues'];
+    const { password, salt, ...result } = user;
     return result;
   }
 
   public async login(user: any) {
-    console.log('@@@', user);
     return await this._generateToken(user);
   }
 
   public async create(user) {
-    const saltToHash = await bcrypt.genSalt(
-      Number(this._configService.get('hash_rounds')),
-    );
+    const saltToHash = await bcrypt.genSalt(Number(hash_rounds));
     const hashedPassword = await bcrypt.hash(user.password, saltToHash);
 
     const newUser = await this._usersService.create({
@@ -45,7 +43,7 @@ export class AuthService {
       salt: saltToHash,
     });
 
-    const { password, salt, ...result } = newUser['dataValues'];
+    const { password, salt, ...result } = newUser;
     const token = await this._generateToken(result);
     return { user: result, token };
   }
