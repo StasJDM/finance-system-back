@@ -24,13 +24,7 @@ import { jwt_expire_time, jwt_secret } from 'src/config/configuration';
     }),
     UsersModule,
   ],
-  providers: [
-    AuthService,
-    LocalStrategy,
-    JwtStrategy,
-    UsersService,
-    ConfigService,
-  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy, UsersService, ConfigService],
   exports: [AuthService],
   controllers: [AuthController],
 })

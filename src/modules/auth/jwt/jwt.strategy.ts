@@ -7,10 +7,7 @@ import { jwt_secret } from 'src/config/configuration';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private configService: ConfigService,
-    private usersService: UsersService,
-  ) {
+  constructor(private configService: ConfigService, private usersService: UsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -21,9 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {
     const user = await this.usersService.findOneById(payload.id);
     if (!user) {
-      throw new UnauthorizedException(
-        'You are not authorized to perform the operation',
-      );
+      throw new UnauthorizedException('You are not authorized to perform the operation');
     }
     return payload;
   }
