@@ -5,10 +5,13 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Transaction } from './transaction.entity';
 
 @Entity()
 export class Category {
@@ -30,6 +33,10 @@ export class Category {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'owner_id' })
   owner: User;
+
+  @ManyToMany(() => Transaction, (transaction) => transaction.categories)
+  @JoinTable()
+  transactions: Transaction[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

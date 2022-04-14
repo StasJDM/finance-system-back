@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Param, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Request, Delete } from '@nestjs/common';
 import { TransactionService } from '../services/transaction.service';
 import { CreateTransactionDto } from '../dto/create-transaction.dto';
+import { AddCategoryDto } from '../dto/add-category.dto';
 
 @Controller('transactions')
 export class TransactionController {
@@ -71,5 +72,21 @@ export class TransactionController {
   findOne(@Request() req, @Param('id') id: string) {
     const userId: string = req.user.id;
     return this.transactionService.findOne(userId, id);
+  }
+
+  @Post(':transactionId/categories')
+  addCategory(@Request() req, @Param('transactionId') transactionId: string, @Body() addCategoryDto: AddCategoryDto) {
+    const userId: string = req.user.id;
+    return this.transactionService.addCategory(userId, transactionId, addCategoryDto);
+  }
+
+  @Delete(':transactionId/categories/:categoryId')
+  removeCategory(
+    @Request() req,
+    @Param('transactionId') transactionId: string,
+    @Param('categoryId') categoryId: string,
+  ) {
+    const userId: string = req.user.id;
+    return this.transactionService.removeCategory(userId, transactionId, categoryId);
   }
 }
