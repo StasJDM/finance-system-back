@@ -5,9 +5,10 @@ import { JwtAuthGuard } from './modules/auth/jwt/jwt-auth.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TransactionModule } from './modules/transaction/transaction.module';
 import OrmConfig from 'ormconfig';
+import { NewsModule } from './modules/news/news.module';
 
 @Module({
-  imports: [AuthModule, TypeOrmModule.forRoot(OrmConfig), TransactionModule],
+  imports: [AuthModule, TypeOrmModule.forRoot(OrmConfig), TransactionModule, NewsModule],
   controllers: [],
   providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
