@@ -1,6 +1,6 @@
 import { EntityRepository, Like, Repository } from 'typeorm';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { Transaction } from './entities/transaction.entity';
+import { CreateTransactionDto } from '../dto/create-transaction.dto';
+import { Transaction } from '../entities/transaction.entity';
 
 @EntityRepository(Transaction)
 export class TransactionRepository extends Repository<Transaction> {
