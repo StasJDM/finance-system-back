@@ -28,12 +28,12 @@ export class User {
   @Column({
     type: 'varchar',
   })
-  password: string;
+  password?: string;
 
   @Column({
     type: 'varchar',
   })
-  salt: string;
+  salt?: string;
 
   @Column({
     type: 'enum',

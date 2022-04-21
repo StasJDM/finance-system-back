@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { SelfGuard } from 'src/core/guards/self.guard';
 import { UserDto } from './user.dto';
 import { UsersService } from './users.service';
 
@@ -16,12 +17,14 @@ export class UsersController {
     return await this.usersService.findOneById(id);
   }
 
-  @Put(':id')
+  @Patch(':id')
+  @UseGuards(SelfGuard)
   async update(@Param('id') id, @Body() user: UserDto) {
     return this.usersService.update(id, user);
   }
 
   @Delete(':id')
+  @UseGuards(SelfGuard)
   async delete(@Param('id') id) {
     return this.usersService.delete(id);
   }

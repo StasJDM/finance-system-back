@@ -23,16 +23,25 @@ export class UsersService {
     return await this.userRepository.save(user);
   }
 
+  // Only for auth service
   async findOneByEmail(email: string): Promise<User> {
-    return await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({ where: { email } });
+    return user;
   }
 
   async findOneById(id: string): Promise<User> {
-    return await this.userRepository.findOne(id);
+    const user = await this.userRepository.findOne(id);
+    const { password, salt, ...safeUser } = user;
+    return safeUser;
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    const users = await this.userRepository.find();
+    const safeUsers = users.map((user) => {
+      const { password, salt, ...safeUser } = user;
+      return safeUser;
+    });
+    return safeUsers;
   }
 
   async update(id: string, updateUserDto: UserDto): Promise<any> {
@@ -46,7 +55,8 @@ export class UsersService {
 
     await this.userRepository.save(user);
 
-    return user;
+    const { password, salt, ...safeUser } = user;
+    return safeUser;
   }
 
   async delete(id: string): Promise<any> {
