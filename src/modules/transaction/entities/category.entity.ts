@@ -20,7 +20,6 @@ export class Category {
 
   @Column({
     type: 'varchar',
-    unique: true,
   })
   label: string;
 

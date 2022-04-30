@@ -5,40 +5,28 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Category } from './category.entity';
 
 @Entity()
-export class Transaction {
+export class Note {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'uuid' })
-  id_from: string;
+  @Column()
+  title: string;
 
-  @Column({ type: 'uuid' })
-  id_to: string;
+  @Column()
+  content: string;
+
+  @Column()
+  ownerId: string;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'id_from' })
-  from: User;
-
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'id_to' })
-  to: User;
-
-  @Column({ type: 'float' })
-  amount: number;
-
-  @Column({ type: 'varchar' })
-  label: string;
-
-  @ManyToMany(() => Category, (category) => category.transactions)
-  categories: Category[];
+  @JoinColumn({ name: 'owner_id' })
+  owner: User;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -18,10 +18,11 @@ export class TransactionRepository extends Repository<Transaction> {
   }
 
   public async findAll(userId: string): Promise<Transaction[]> {
-    return await this.find({
+    const transactions = await this.find({
       where: [{ id_from: userId }, { id_to: userId }],
-      relations: ['categories'],
+      relations: ['categories', 'from', 'to'],
     });
+    return this._filterOnlyCurrentUserTransactionsCategories(transactions, userId);
   }
 
   public async findAllCount(userId: string): Promise<number> {
@@ -45,10 +46,11 @@ export class TransactionRepository extends Repository<Transaction> {
   }
 
   public async findAllOutgoing(userId: string): Promise<Transaction[]> {
-    return await this.find({
+    const transactions = await this.find({
       where: { id_from: userId },
       relations: ['categories'],
     });
+    return this._filterOnlyCurrentUserTransactionsCategories(transactions, userId);
   }
 
   public async findOutgoingCount(userId: string): Promise<number> {
@@ -59,19 +61,21 @@ export class TransactionRepository extends Repository<Transaction> {
   }
 
   public async findOutgoingTop(userId: string, count: number): Promise<Transaction[]> {
-    return await this.find({
+    const transactions = await this.find({
       where: { id_from: userId },
       order: { label: 'DESC' },
       relations: ['categories'],
       take: count,
     });
+    return this._filterOnlyCurrentUserTransactionsCategories(transactions, userId);
   }
 
   public async findAllIncoming(userId: string): Promise<Transaction[]> {
-    return await this.find({
+    const transactions = await this.find({
       where: { id_to: userId },
       relations: ['categories'],
     });
+    return this._filterOnlyCurrentUserTransactionsCategories(transactions, userId);
   }
 
   public async findIncomingCount(userId: string): Promise<number> {
@@ -82,19 +86,23 @@ export class TransactionRepository extends Repository<Transaction> {
   }
 
   public async findIncomingTop(userId: string, count: number): Promise<Transaction[]> {
-    return await this.find({
+    const transactions = await this.find({
       where: { id_to: userId },
       order: { label: 'DESC' },
       relations: ['categories'],
       take: count,
     });
+    return this._filterOnlyCurrentUserTransactionsCategories(transactions, userId);
   }
 
   public async findById(userId: string, id: string): Promise<Transaction> {
-    return await this.findOne(id, {
+    const transaction = await this.findOne(id, {
       where: [{ id_from: userId }, { id_to: userId }],
       relations: ['categories'],
     });
+
+    transaction.categories = transaction.categories.filter((category) => category.owner_id === userId);
+    return transaction;
   }
 
   public async search(userId: string, searchTerm: string): Promise<Transaction[]> {
@@ -104,11 +112,13 @@ export class TransactionRepository extends Repository<Transaction> {
       query.push({ amount: searchTerm });
     }
 
-    return this.createQueryBuilder('transaction')
+    const transactions = await this.createQueryBuilder('transaction')
       .where(query)
       .andWhere(`(id_from='${userId}' OR id_to='${userId}')`)
       .leftJoinAndSelect('transaction.categories', 'category')
       .getMany();
+
+    return this._filterOnlyCurrentUserTransactionsCategories(transactions, userId);
   }
 
   public async addCategory(userId: string, transactionId: string, category: Category): Promise<Transaction> {
@@ -125,7 +135,12 @@ export class TransactionRepository extends Repository<Transaction> {
 
     transaction.categories = [...transaction.categories, category];
 
-    return await this.save(transaction);
+    await this.save(transaction);
+
+    console.log(transaction, category);
+
+    transaction.categories = transaction.categories.filter((category) => category.owner_id === userId);
+    return transaction;
   }
 
   public async removeCategory(userId: string, transactionId: string, categoryId: string): Promise<Transaction> {
@@ -136,10 +151,18 @@ export class TransactionRepository extends Repository<Transaction> {
       ],
     });
 
-    console.log(transaction.categories);
     transaction.categories = (transaction.categories || []).filter((category) => category.id !== categoryId);
-    console.log(transaction.categories);
 
-    return await this.save(transaction);
+    await this.save(transaction);
+
+    transaction.categories = transaction.categories.filter((category) => category.owner_id === userId);
+    return transaction;
+  }
+
+  private _filterOnlyCurrentUserTransactionsCategories(transactions: Transaction[], userId: string): Transaction[] {
+    return transactions.map((transaction) => {
+      transaction.categories = transaction.categories.filter((category) => category.owner_id === userId);
+      return transaction;
+    });
   }
 }
