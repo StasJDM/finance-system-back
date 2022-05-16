@@ -7,7 +7,7 @@ import { LocalStrategy } from './local/local.strategy';
 import { AuthController } from './auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from '../users/users.module';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/services/users.service';
 import { jwt_expire_time, jwt_secret } from 'src/config/configuration';
 
 @Module({

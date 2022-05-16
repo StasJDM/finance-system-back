@@ -1,11 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { SelfGuard } from 'src/core/guards/self.guard';
 import { UserDto } from './user.dto';
-import { UsersService } from './users.service';
+import { UsersService } from './services/users.service';
+import { ContactService } from './services/contact.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService, private contactService: ContactService) {}
 
   @Get()
   async findAll() {
@@ -27,5 +28,17 @@ export class UsersController {
   @UseGuards(SelfGuard)
   async delete(@Param('id') id) {
     return this.usersService.delete(id);
+  }
+
+  @Post('contacts/:contactId')
+  async addContact(@Request() req, @Param('contactId') contactId: string) {
+    const userId: string = req.user.id;
+    return this.contactService.create(userId, contactId);
+  }
+
+  @Delete('contacts/:contactId')
+  async removeContact(@Request() req, @Param('contactId') contactId: string) {
+    const userId: string = req.user.id;
+    return this.contactService.remove(userId, contactId);
   }
 }

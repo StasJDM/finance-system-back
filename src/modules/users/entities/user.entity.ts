@@ -1,4 +1,3 @@
-import { Transaction } from 'src/modules/transaction/entities/transaction.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,6 +9,7 @@ import {
 } from 'typeorm';
 import { Gender } from '../../enums';
 import { Role } from '../role.enum';
+import { Contact } from './contact.entity';
 
 @Entity()
 export class User {
@@ -57,6 +57,9 @@ export class User {
     default: Role.User,
   })
   role: Role;
+
+  @OneToMany(() => Contact, (contact) => contact.userFrom)
+  contacts: Contact[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
