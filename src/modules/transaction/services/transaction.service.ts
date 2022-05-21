@@ -17,6 +17,84 @@ export class TransactionService {
     return this.transactionRepository.findAll(userId);
   }
 
+  async findAndGroupByMonth(userId: string): Promise<{ month: string; transactions: Transaction[] }[]> {
+    const transactions = await this.transactionRepository.findAll(userId);
+
+    const dates = transactions.map((transaction) => transaction.createdAt);
+    const months = dates.reduce((prev, next) => {
+      const month = next.getMonth();
+      if (!prev.includes(month)) {
+        return [...prev, month];
+      } else {
+        return prev;
+      }
+    }, []);
+
+    const transactionsByMonth = months.map((month) => {
+      const transactionsInCurrentMonth = transactions.filter((tr) => tr.createdAt.getMonth() === month);
+      return {
+        month,
+        transactions: transactionsInCurrentMonth,
+        count: transactionsInCurrentMonth.length,
+        amount: transactionsInCurrentMonth.reduce((prev, next) => prev + next.amount, 0),
+      };
+    });
+
+    return transactionsByMonth;
+  }
+
+  async findIncomingAndGroupByMonth(userId: string): Promise<{ month: string; transactions: Transaction[] }[]> {
+    const transactions = await this.transactionRepository.findAllIncoming(userId);
+
+    const dates = transactions.map((transaction) => transaction.createdAt);
+    const months = dates.reduce((prev, next) => {
+      const month = next.getMonth();
+      if (!prev.includes(month)) {
+        return [...prev, month];
+      } else {
+        return prev;
+      }
+    }, []);
+
+    const transactionsByMonth = months.map((month) => {
+      const transactionsInCurrentMonth = transactions.filter((tr) => tr.createdAt.getMonth() === month);
+      return {
+        month,
+        transactions: transactionsInCurrentMonth,
+        count: transactionsInCurrentMonth.length,
+        amount: transactionsInCurrentMonth.reduce((prev, next) => prev + next.amount, 0),
+      };
+    });
+
+    return transactionsByMonth;
+  }
+
+  async findOutgoingAndGroupByMonth(userId: string): Promise<{ month: string; transactions: Transaction[] }[]> {
+    const transactions = await this.transactionRepository.findAllOutgoing(userId);
+
+    const dates = transactions.map((transaction) => transaction.createdAt);
+    const months = dates.reduce((prev, next) => {
+      const month = next.getMonth();
+      if (!prev.includes(month)) {
+        return [...prev, month];
+      } else {
+        return prev;
+      }
+    }, []);
+
+    const transactionsByMonth = months.map((month) => {
+      const transactionsInCurrentMonth = transactions.filter((tr) => tr.createdAt.getMonth() === month);
+      return {
+        month,
+        transactions: transactionsInCurrentMonth,
+        count: transactionsInCurrentMonth.length,
+        amount: transactionsInCurrentMonth.reduce((prev, next) => prev + next.amount, 0),
+      };
+    });
+
+    return transactionsByMonth;
+  }
+
   findCountByUserId(userId: string): Promise<number> {
     return this.transactionRepository.findAllCount(userId);
   }

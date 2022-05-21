@@ -19,6 +19,24 @@ export class TransactionController {
     return this.transactionService.findByUserId(userId);
   }
 
+  @Get('month')
+  findAndGroupByMonth(@Request() req) {
+    const userId: string = req.user.id;
+    return this.transactionService.findAndGroupByMonth(userId);
+  }
+
+  @Get('month/incoming')
+  findIncomingAndGroupByMonth(@Request() req) {
+    const userId: string = req.user.id;
+    return this.transactionService.findIncomingAndGroupByMonth(userId);
+  }
+
+  @Get('month/outgoing')
+  findOutgoingAndGroupByMonth(@Request() req) {
+    const userId: string = req.user.id;
+    return this.transactionService.findOutgoingAndGroupByMonth(userId);
+  }
+
   @Get('/amount')
   findAmount(@Request() req) {
     const userId: string = req.user.id;
