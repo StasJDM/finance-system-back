@@ -36,6 +36,8 @@ export class TransactionService {
         month,
         transactions: transactionsInCurrentMonth,
         count: transactionsInCurrentMonth.length,
+        max: transactionsInCurrentMonth.sort((tr1, tr2) => tr2.amount - tr1.amount)[0],
+        min: transactionsInCurrentMonth.sort((tr1, tr2) => tr1.amount - tr2.amount)[0],
         amount: {
           incoming: transactionsInCurrentMonth.reduce((prev, next) => {
             if (next.id_to === userId) {
