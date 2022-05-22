@@ -36,7 +36,22 @@ export class TransactionService {
         month,
         transactions: transactionsInCurrentMonth,
         count: transactionsInCurrentMonth.length,
-        amount: transactionsInCurrentMonth.reduce((prev, next) => prev + next.amount, 0),
+        amount: {
+          incoming: transactionsInCurrentMonth.reduce((prev, next) => {
+            if (next.id_to === userId) {
+              return prev + next.amount;
+            } else {
+              return prev;
+            }
+          }, 0),
+          outgoing: transactionsInCurrentMonth.reduce((prev, next) => {
+            if (next.id_from === userId) {
+              return prev + next.amount;
+            } else {
+              return prev;
+            }
+          }, 0),
+        },
       };
     });
 
